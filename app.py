@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
-from models import db, Station, Transportation, Park, Traffic, Weather, WeatherType, Pharmacy, WorkTime, Event, Request, RequestType
+from models import WeatherDetail, db, Station, Transportation, Park, Traffic, Weather, Pharmacy, WorkTime, Event, Request, RequestType
 from datetime import datetime
 from flask import abort
+import os
 
 # Initialize Flask app and SQLAlchemy
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///smart_city.db'
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "smart_city.db")}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
@@ -134,26 +136,30 @@ def add_weather():
     data = request.get_json()
     new_weather = Weather(
         weather_day=data['weather_day'],
-        weather_type_id=data['weather_type_id'],
+        weather_detail_id=data['weather_detail_id'],
         weather_location=data['weather_location']
     )
     db.session.add(new_weather)
     db.session.commit()
-    return jsonify({'message': 'Weather information added successfully'}), 201
+    return jsonify({'message': 'Weather added successfully'}), 201
 
-# Example route for retrieving weather information
-@app.route('/weather', methods=['GET'])
-def get_weather():
-    weather = Weather.query.all()
-    result = [
-        {
-            'weather_id': item.weather_id,
-            'weather_day': item.weather_day,
-            'weather_type_id': item.weather_type_id,
-            'weather_location': item.weather_location
-        } for item in weather
-    ]
-    return jsonify(result), 200
+@app.route('/weather/<int:weather_id>', methods=['GET'])
+def get_weather_by_id(weather_id):
+    weather = Weather.query.get(weather_id)
+    if not weather:
+        abort(404, description="Weather not found")
+    return jsonify({
+        'weather_id': weather.weather_id,
+        'weather_day': weather.weather_day,
+        'weather_detail_id': weather.weather_detail_id,
+        'weather_location': weather.weather_location,
+        'weather_detail': {
+            'weather_detail_id': weather.weather_detail.weather_detail_id,
+            'weather_detail_type': weather.weather_detail.weather_detail_type,
+            'weather_detail_temperature': weather.weather_detail.weather_detail_temperature,
+            'weather_detail_time': weather.weather_detail.weather_detail_time.strftime('%Y-%m-%d %H:%M:%S')
+        }
+    }), 20
 
 # Example route for adding pharmacy
 @app.route('/pharmacy', methods=['POST'])
@@ -185,41 +191,40 @@ def get_pharmacy():
     return jsonify(result), 200
 
 # Example route for adding weather type
-@app.route('/weather_type', methods=['POST'])
-def add_weather_type():
+@app.route('/weather_detail', methods=['POST'])
+def add_weather_detail():
     data = request.get_json()
-    new_weather_type = WeatherType(
-        weather_type=data['weather_type'],
-        weather_type_temperature=data['weather_type_temperature'],
-        work_time_id=data['work_time_id']
+    weather_detail_time = datetime.strptime(data['weather_detail_time'], '%Y-%m-%d %H:%M:%S')
+    new_weather_detail = WeatherDetail(
+        weather_detail_type=data['weather_detail_type'],
+        weather_detail_temperature=data['weather_detail_temperature'],
+        weather_detail_time=weather_detail_time
     )
-    db.session.add(new_weather_type)
+    db.session.add(new_weather_detail)
     db.session.commit()
-    return jsonify({'message': 'Weather type information added successfully'}), 201
+    return jsonify({'message': 'WeatherDetail added successfully'}), 201
 
-# Example route for retrieving weather type information
-@app.route('/weather_type', methods=['GET'])
-def get_weather_type():
-    weather_types = WeatherType.query.all()
-    result = [
-        {
-            'weather_type_id': item.weather_type_id,
-            'weather_type': item.weather_type,
-            'weather_type_temperature': item.weather_type_temperature,
-            'work_time_id': item.work_time_id
-        } for item in weather_types
-    ]
-    return jsonify(result), 200
-
-@app.route('/weather_type/<int:weather_type_id>', methods=['GET'])
-def get_weather_type_by_id(weather_type_id):
-    weather_type = WeatherType.query.get(weather_type_id)
+@app.route('/weather_detail/<int:weather_detail_id>', methods=['GET'])
+def get_weather_detail_by_id(weather_detail_id):
+    weather_detail = WeatherDetail.query.get(weather_detail_id)
+    if not weather_detail:
+        abort(404, description="WeatherDetail not found")
     return jsonify({
-        'weather_type_id': weather_type.weather_type_id,
-        'weather_type': weather_type.weather_type,
-        'weather_type_temperature': weather_type.weather_type_temperature,
-        'work_time_id': weather_type.work_time_id
+        'weather_detail_id': weather_detail.weather_detail_id,
+        'weather_detail_type': weather_detail.weather_detail_type,
+        'weather_detail_temperature': weather_detail.weather_detail_temperature,
+        'weather_detail_time': weather_detail.weather_detail_time.strftime('%Y-%m-%d %H:%M:%S')
     }), 200
+
+# @app.route('/weather_type/<int:weather_type_id>', methods=['GET'])
+# def get_weather_type_by_id(weather_type_id):
+#     weather_type = WeatherType.query.get(weather_type_id)
+#     return jsonify({
+#         'weather_type_id': weather_type.weather_type_id,
+#         'weather_type': weather_type.weather_type,
+#         'weather_type_temperature': weather_type.weather_type_temperature,
+#         'work_time_id': weather_type.work_time_id
+#     }), 200
 
 @app.route('/work_time', methods=['POST'])
 def add_work_time():

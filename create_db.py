@@ -48,18 +48,17 @@ sql_statements = [
     CREATE TABLE weather (
         weather_id INTEGER PRIMARY KEY,
         weather_day INTEGER,
-        weather_type_id INTEGER,
+        weather_detail_id INTEGER,
         weather_location VARCHAR(255),
-        FOREIGN KEY (weather_type_id) REFERENCES weather_type(weather_type_id)
+        FOREIGN KEY (weather_detail_id) REFERENCES weather_detail(weather_detail_id)
     );
     ''',
     '''
-    CREATE TABLE weather_type (
-        weather_type_id INTEGER PRIMARY KEY,
-        weather_type VARCHAR(255),
-        weather_type_temperature INTEGER,
-        work_time_id INTEGER,
-        FOREIGN KEY (work_time_id) REFERENCES work_time(work_time_id)
+    CREATE TABLE weather_detail (
+        weather_detail_id INTEGER PRIMARY KEY,
+        weather_detail_type VARCHAR(255),
+        weather_detail_temperature INTEGER,
+        weather_detail_time DATE
     );
     ''',
     '''
@@ -112,12 +111,12 @@ sql_statements = [
     "INSERT INTO park (park_name, station_id, park_full) VALUES ('Park Y', 2, 1);",
     "INSERT INTO traffic (crowd_situation, station_id) VALUES (0.5, 1);",
     "INSERT INTO traffic (crowd_situation, station_id) VALUES (0.8, 2);",
-    "INSERT INTO weather (weather_day, weather_type_id, weather_location) VALUES (20240525, 1, 'New York');",
-    "INSERT INTO weather (weather_day, weather_type_id, weather_location) VALUES (20240526, 2, 'Los Angeles');",
-    "INSERT INTO weather_type (weather_type, weather_type_temperature, work_time_id) VALUES ('Sunny', 30, 1);",
-    "INSERT INTO weather_type (weather_type, weather_type_temperature, work_time_id) VALUES ('Rainy', 20, 2);",
-    "INSERT INTO pharmacy (work_time_id, pharmacy_name, pharmacy_location, pharmacy_on_duty) VALUES (1, 'Pharmacy 1', 'New York', 1);",
-    "INSERT INTO pharmacy (work_time_id, pharmacy_name, pharmacy_location, pharmacy_on_duty) VALUES (2, 'Pharmacy 2', 'Los Angeles', 0);",
+    "INSERT INTO weather (weather_day, weather_detail_id, weather_location) VALUES (20240525, 1, 'New York');",
+    "INSERT INTO weather (weather_day, weather_detail_id, weather_location) VALUES (20240525, 2, 'New York');",
+    "INSERT INTO weather_detail (weather_detail_id, weather_detail_type, weather_detail_temperature, weather_detail_time) VALUES (1,'Partly cloudy', 30, '2024-05-29 12:00:00');",
+    "INSERT INTO weather_detail (weather_detail_id, weather_detail_type, weather_detail_temperature, weather_detail_time) VALUES (2,'Sunny', 31, '2024-05-29 13:00:00');",
+    "INSERT INTO pharmacy (pharmacy_id,work_time_id, pharmacy_name, pharmacy_location, pharmacy_on_duty) VALUES (1,1, 'Pharmacy 1', 'New York', 1);",
+    "INSERT INTO pharmacy (pharmacy_id,work_time_id, pharmacy_name, pharmacy_location, pharmacy_on_duty) VALUES (2,2, 'Pharmacy 2', 'Los Angeles', 0);",
     "INSERT INTO work_time (work_time_start, work_time_end) VALUES ('2024-05-25 08:00:00', '2024-05-26 17:00:00');",
     "INSERT INTO work_time (work_time_start, work_time_end) VALUES ('2024-05-26 09:00:00', '2024-05-27 18:00:00');",
     "INSERT INTO event (work_time_id, event_photo, event_name, event_location, event_is_liked) VALUES (1, 'event1.jpg', 'Event 1', 'New York', 1);",
@@ -129,8 +128,11 @@ sql_statements = [
 ]
 
 # Execute SQL statements
+a = 0
 for statement in sql_statements:
     cur.execute(statement)
+    print(a)
+    a+=1
 
 # Commit changes
 conn.commit()
