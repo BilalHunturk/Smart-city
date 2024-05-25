@@ -48,6 +48,58 @@ def get_stations():
     ]
     return jsonify(result), 200
 
+@app.route('/event', methods=['POST'])
+def add_event():
+    data = request.get_json()
+    new_event = Event(
+        work_time_id=data['work_time_id'],
+        event_photo=data['event_photo'],
+        event_name=data['event_name'],
+        event_location=data['event_location'],
+        event_is_liked=data['event_is_liked']
+    )
+    db.session.add(new_event)
+    db.session.commit()
+    return jsonify({'message': 'Event added successfully'}), 201
+
+@app.route('/events', methods=['GET'])
+def get_all_events():
+    events = Event.query.all()
+    result = [
+        {
+            'event_id': event.event_id,
+            'work_time_id': event.work_time_id,
+            'event_photo': event.event_photo,
+            'event_name': event.event_name,
+            'event_location': event.event_location,
+            'event_is_liked': event.event_is_liked,
+            'work_time': {
+                'work_time_id': event.work_time.work_time_id,
+                'work_time_start': event.work_time.work_time_start.strftime('%Y-%m-%d %H:%M:%S'),
+                'work_time_end': event.work_time.work_time_end.strftime('%Y-%m-%d %H:%M:%S')
+            }
+        } for event in events
+    ]
+    return jsonify(result), 200
+
+@app.route('/event/<int:event_id>', methods=['GET'])
+def get_event_by_id(event_id):
+    event = Event.query.get(event_id)
+    if not event:
+        abort(404, description="Event not found")
+    return jsonify({
+        'event_id': event.event_id,
+        'work_time_id': event.work_time_id,
+        'event_photo': event.event_photo,
+        'event_name': event.event_name,
+        'event_location': event.event_location,
+        'event_is_liked': event.event_is_liked,
+        'work_time': {
+            'work_time_id': event.work_time.work_time_id,
+            'work_time_start': event.work_time.work_time_start.strftime('%Y-%m-%d %H:%M:%S'),
+            'work_time_end': event.work_time.work_time_end.strftime('%Y-%m-%d %H:%M:%S')
+        }
+    }), 200
 
 @app.route('/transportation', methods=['POST'])
 def add_transportation():
@@ -183,34 +235,34 @@ def get_weather():
     
     return jsonify(result), 20
 
-# Example route for adding pharmacy
-@app.route('/pharmacy', methods=['POST'])
-def add_pharmacy():
-    data = request.get_json()
-    new_pharmacy = Pharmacy(
-        work_time_id=data['work_time_id'],
-        pharmacy_name=data['pharmacy_name'],
-        pharmacy_location=data['pharmacy_location'],
-        pharmacy_on_duty=data['pharmacy_on_duty']
-    )
-    db.session.add(new_pharmacy)
-    db.session.commit()
-    return jsonify({'message': 'Pharmacy information added successfully'}), 201
+# # Example route for adding pharmacy
+# @app.route('/pharmacy', methods=['POST'])
+# def add_pharmacy():
+#     data = request.get_json()
+#     new_pharmacy = Pharmacy(
+#         work_time_id=data['work_time_id'],
+#         pharmacy_name=data['pharmacy_name'],
+#         pharmacy_location=data['pharmacy_location'],
+#         pharmacy_on_duty=data['pharmacy_on_duty']
+#     )
+#     db.session.add(new_pharmacy)
+#     db.session.commit()
+#     return jsonify({'message': 'Pharmacy information added successfully'}), 201
 
-# Example route for retrieving pharmacy information
-@app.route('/pharmacy', methods=['GET'])
-def get_pharmacy():
-    pharmacy = Pharmacy.query.all()
-    result = [
-        {
-            'pharmacy_id': item.pharmacy_id,
-            'work_time_id': item.work_time_id,
-            'pharmacy_name': item.pharmacy_name,
-            'pharmacy_location': item.pharmacy_location,
-            'pharmacy_on_duty': item.pharmacy_on_duty
-        } for item in pharmacy
-    ]
-    return jsonify(result), 200
+# # Example route for retrieving pharmacy information
+# @app.route('/pharmacy', methods=['GET'])
+# def get_pharmacy():
+#     pharmacy = Pharmacy.query.all()
+#     result = [
+#         {
+#             'pharmacy_id': item.pharmacy_id,
+#             'work_time_id': item.work_time_id,
+#             'pharmacy_name': item.pharmacy_name,
+#             'pharmacy_location': item.pharmacy_location,
+#             'pharmacy_on_duty': item.pharmacy_on_duty
+#         } for item in pharmacy
+#     ]
+#     return jsonify(result), 200
 
 # Example route for adding weather type
 @app.route('/weather_detail', methods=['POST'])
@@ -286,33 +338,55 @@ def get_work_time_by_id(work_time_id):
         'work_time_end': work_time.work_time_end.strftime('%Y-%m-%d %H:%M:%S')
     }), 200
 
-@app.route('/event', methods=['POST'])
-def add_event():
-    data = request.get_json()
-    new_event = Event(
-        work_time_id=data['work_time_id'],
-        event_photo=data['event_photo'],
-        event_name=data['event_name'],
-        event_location=data['event_location'],
-        event_is_liked=data['event_is_liked']
-    )
-    db.session.add(new_event)
-    db.session.commit()
-    return jsonify({'message': 'Event information added successfully'}), 201
+# @app.route('/event', methods=['POST'])
+# def add_event():
+#     data = request.get_json()
+#     new_event = Event(
+#         work_time_id=data['work_time_id'],
+#         event_photo=data['event_photo'],
+#         event_name=data['event_name'],
+#         event_location=data['event_location'],
+#         event_is_liked=data['event_is_liked']
+#     )
+#     db.session.add(new_event)
+#     db.session.commit()
+#     return jsonify({'message': 'Event information added successfully'}), 201
+
+@app.route('/pharmacy/<int:pharmacy_id>', methods=['GET'])
+def get_pharmacy_by_id(pharmacy_id):
+    pharmacy = Pharmacy.query.get(pharmacy_id)
+    if not pharmacy:
+        abort(404, description="Pharmacy not found")
+    return jsonify({
+        'pharmacy_id': pharmacy.pharmacy_id,
+        'work_time_id': pharmacy.work_time_id,
+        'pharmacy_name': pharmacy.pharmacy_name,
+        'pharmacy_location': pharmacy.pharmacy_location,
+        'pharmacy_on_duty': pharmacy.pharmacy_on_duty,
+        'work_time': {
+            'work_time_id': pharmacy.work_time.work_time_id,
+            'work_time_start': pharmacy.work_time.work_time_start.strftime('%Y-%m-%d %H:%M:%S'),
+            'work_time_end': pharmacy.work_time.work_time_end.strftime('%Y-%m-%d %H:%M:%S')
+        }
+    }), 200
 
 # Example route for retrieving event information
-@app.route('/event', methods=['GET'])
-def get_event():
-    events = Event.query.all()
+@app.route('/pharmacies', methods=['GET'])
+def get_all_pharmacies():
+    pharmacies = Pharmacy.query.all()
     result = [
         {
-            'event_id': item.event_id,
-            'work_time_id': item.work_time_id,
-            'event_photo': item.event_photo,
-            'event_name': item.event_name,
-            'event_location': item.event_location,
-            'event_is_liked': item.event_is_liked
-        } for item in events
+            'pharmacy_id': pharmacy.pharmacy_id,
+            'work_time_id': pharmacy.work_time_id,
+            'pharmacy_name': pharmacy.pharmacy_name,
+            'pharmacy_location': pharmacy.pharmacy_location,
+            'pharmacy_on_duty': pharmacy.pharmacy_on_duty,
+            'work_time': {
+                'work_time_id': pharmacy.work_time.work_time_id,
+                'work_time_start': pharmacy.work_time.work_time_start.strftime('%Y-%m-%d %H:%M:%S'),
+                'work_time_end': pharmacy.work_time.work_time_end.strftime('%Y-%m-%d %H:%M:%S')
+            }
+        } for pharmacy in pharmacies
     ]
     return jsonify(result), 200
 
