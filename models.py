@@ -47,6 +47,7 @@ class Pharmacy(db.Model):
     pharmacy_name = db.Column(db.String(255))
     pharmacy_location = db.Column(db.String(255))
     pharmacy_on_duty = db.Column(db.Boolean)
+    work_time = db.relationship('WorkTime',backref=db.backref('pharmacies', lazy=True))
 
 class WorkTime(db.Model):
     work_time_id = db.Column(db.Integer, primary_key=True)
@@ -60,6 +61,7 @@ class Event(db.Model):
     event_name = db.Column(db.String(255))
     event_location = db.Column(db.String(255))
     event_is_liked = db.Column(db.Boolean)
+    work_time = db.relationship('WorkTime',backref=db.backref('events', lazy=True))
 
 class Request(db.Model):
     request_id = db.Column(db.Integer, primary_key=True)
