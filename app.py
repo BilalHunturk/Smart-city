@@ -163,7 +163,13 @@ def get_parks():
             'park_id': park.park_id,
             'park_name': park.park_name,
             'station_id': park.station_id,
-            'park_full': park.park_full
+            'park_full': park.park_full,
+            'station' : {
+                'station_id':park.station.station_id,
+                'station_name':park.station.station_name,
+                'station_latitude':park.station.station_latitude,
+                'station_longitude':park.station.station_longitude
+            }
         } for park in parks
     ]
     return jsonify(result), 200
@@ -236,11 +242,11 @@ def get_weather():
             'weather_detail_id': weather.weather_detail_id,
             'weather_location': weather.weather_location,
             'weather_detail': {
-            'weather_detail_id': weather.weather_detail.weather_detail_id,
-            'weather_detail_type': weather.weather_detail.weather_detail_type,
-            'weather_detail_temperature': weather.weather_detail.weather_detail_temperature,
-            'weather_detail_time': weather.weather_detail.weather_detail_time.strftime('%Y-%m-%d %H:%M:%S')
-        }}for weather in weathers
+                'weather_detail_id': weather.weather_detail.weather_detail_id,
+                'weather_detail_type': weather.weather_detail.weather_detail_type,
+                'weather_detail_temperature': weather.weather_detail.weather_detail_temperature,
+                'weather_detail_time': weather.weather_detail.weather_detail_time.strftime('%Y-%m-%d %H:%M:%S')}
+        }for weather in weathers
     ]
     
     return jsonify(result), 20

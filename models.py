@@ -22,6 +22,7 @@ class Park(db.Model):
     park_name = db.Column(db.String(255))
     station_id = db.Column(db.Integer, db.ForeignKey('station.station_id'))
     park_full = db.Column(db.Integer)
+    station = db.relationship('Station', backref=db.backref('parks', lazy=True))
 
 class Traffic(db.Model):
     traffic_id = db.Column(db.Integer, primary_key=True)
