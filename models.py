@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import JSON
 
 db = SQLAlchemy()
 
@@ -12,9 +13,9 @@ class Transportation(db.Model):
     transportation_id = db.Column(db.Integer, primary_key=True)
     transportation_name = db.Column(db.String(255))
     transportation_plaque = db.Column(db.String(255))
-    station_id = db.Column(db.Integer, db.ForeignKey('station.station_id'))
     transportation_latitude = db.Column(db.Float)
     transportation_longitude = db.Column(db.Float)
+    station_ids = db.Column(JSON)  # Stores the list of station IDs
 
 class Park(db.Model):
     park_id = db.Column(db.Integer, primary_key=True)

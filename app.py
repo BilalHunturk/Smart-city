@@ -107,7 +107,7 @@ def add_transportation():
     new_transportation = Transportation(
         transportation_name=data['transportation_name'],
         transportation_plaque=data['transportation_plaque'],
-        station_id=data['station_id'],
+        station_ids=data['station_ids'],
         transportation_latitude=data['transportation_latitude'],
         transportation_longitude=data['transportation_longitude']
     )
@@ -115,21 +115,31 @@ def add_transportation():
     db.session.commit()
     return jsonify({'message': 'Transportation added successfully'}), 201
 
-
 # Example route for retrieving transportation
 @app.route('/transportations', methods=['GET'])
 def get_transportations():
     transportations = Transportation.query.all()
-    result = [
-        {
+    result = []
+    for transportation in transportations:
+        transportation_data = {
             'transportation_id': transportation.transportation_id,
             'transportation_name': transportation.transportation_name,
             'transportation_plaque': transportation.transportation_plaque,
-            'station_id': transportation.station_id,
             'transportation_latitude': transportation.transportation_latitude,
-            'transportation_longitude': transportation.transportation_longitude
-        } for transportation in transportations
-    ]
+            'transportation_longitude': transportation.transportation_longitude,
+            'stations': []
+        }
+        # Fetch the stations using the station IDs
+        for station_id in transportation.station_ids:
+            station = Station.query.get(station_id)
+            if station:
+                transportation_data['stations'].append({
+                    'station_id': station.station_id,
+                    'station_name': station.station_name,
+                    'station_latitude': station.station_latitude,
+                    'station_longitude': station.station_longitude
+                })
+        result.append(transportation_data)
     return jsonify(result), 200
 
 @app.route('/park', methods=['POST'])
@@ -235,35 +245,6 @@ def get_weather():
     
     return jsonify(result), 20
 
-# # Example route for adding pharmacy
-# @app.route('/pharmacy', methods=['POST'])
-# def add_pharmacy():
-#     data = request.get_json()
-#     new_pharmacy = Pharmacy(
-#         work_time_id=data['work_time_id'],
-#         pharmacy_name=data['pharmacy_name'],
-#         pharmacy_location=data['pharmacy_location'],
-#         pharmacy_on_duty=data['pharmacy_on_duty']
-#     )
-#     db.session.add(new_pharmacy)
-#     db.session.commit()
-#     return jsonify({'message': 'Pharmacy information added successfully'}), 201
-
-# # Example route for retrieving pharmacy information
-# @app.route('/pharmacy', methods=['GET'])
-# def get_pharmacy():
-#     pharmacy = Pharmacy.query.all()
-#     result = [
-#         {
-#             'pharmacy_id': item.pharmacy_id,
-#             'work_time_id': item.work_time_id,
-#             'pharmacy_name': item.pharmacy_name,
-#             'pharmacy_location': item.pharmacy_location,
-#             'pharmacy_on_duty': item.pharmacy_on_duty
-#         } for item in pharmacy
-#     ]
-#     return jsonify(result), 200
-
 # Example route for adding weather type
 @app.route('/weather_detail', methods=['POST'])
 def add_weather_detail():
@@ -290,15 +271,6 @@ def get_weather_detail_by_id(weather_detail_id):
         'weather_detail_time': weather_detail.weather_detail_time.strftime('%Y-%m-%d %H:%M:%S')
     }), 200
 
-# @app.route('/weather_type/<int:weather_type_id>', methods=['GET'])
-# def get_weather_type_by_id(weather_type_id):
-#     weather_type = WeatherType.query.get(weather_type_id)
-#     return jsonify({
-#         'weather_type_id': weather_type.weather_type_id,
-#         'weather_type': weather_type.weather_type,
-#         'weather_type_temperature': weather_type.weather_type_temperature,
-#         'work_time_id': weather_type.work_time_id
-#     }), 200
 
 @app.route('/work_time', methods=['POST'])
 def add_work_time():
@@ -312,7 +284,6 @@ def add_work_time():
     db.session.add(new_work_time)
     db.session.commit()
     return jsonify({'message': 'Work time information added successfully'}), 201
-
 
 # Example route for retrieving work time information
 @app.route('/work_time', methods=['GET'])

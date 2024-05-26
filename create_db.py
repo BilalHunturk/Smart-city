@@ -21,10 +21,9 @@ sql_statements = [
         transportation_id INTEGER PRIMARY KEY,
         transportation_name VARCHAR(255),
         transportation_plaque VARCHAR(255),
-        station_id INTEGER,
         transportation_latitude FLOAT,
         transportation_longitude FLOAT,
-        FOREIGN KEY (station_id) REFERENCES station(station_id)
+        station_ids TEXT
     );
     ''',
     '''
@@ -105,8 +104,8 @@ sql_statements = [
     ''',
      "INSERT INTO station (station_name, station_latitude, station_longitude) VALUES ('Station A', 40.7128, -74.0060);",
     "INSERT INTO station (station_name, station_latitude, station_longitude) VALUES ('Station B', 34.0522, -118.2437);",
-    "INSERT INTO transportation (transportation_name, transportation_plaque, station_id, transportation_latitude, transportation_longitude) VALUES ('Bus 1', 'ABC123', 1, 40.7128, -74.0060);",
-    "INSERT INTO transportation (transportation_name, transportation_plaque, station_id, transportation_latitude, transportation_longitude) VALUES ('Bus 2', 'XYZ456', 2, 34.0522, -118.2437);",
+    '''INSERT INTO transportation (transportation_name, transportation_plaque, transportation_latitude, transportation_longitude, station_ids) VALUES ('Bus 1', 'ABC123', 12.6234, -13.0060, '["1", "2"]')''',
+    '''INSERT INTO transportation (transportation_name, transportation_plaque, transportation_latitude, transportation_longitude, station_ids) VALUES ('Bus 2', 'DEF456', 40.7128, -74.0060, '["1"]')''',
     "INSERT INTO park (park_name, station_id, park_full) VALUES ('Park X', 1, 0);",
     "INSERT INTO park (park_name, station_id, park_full) VALUES ('Park Y', 2, 1);",
     "INSERT INTO traffic (crowd_situation, station_id) VALUES (0.5, 1);",
