@@ -67,6 +67,8 @@ sql_statements = [
         pharmacy_name VARCHAR(255),
         pharmacy_location VARCHAR(255),
         pharmacy_on_duty BOOLEAN,
+        pharmacy_latitude FLOAT,
+        pharmacy_longitude FLOAT,
         FOREIGN KEY (work_time_id) REFERENCES work_time(work_time_id)
     );
     ''',
@@ -114,8 +116,8 @@ sql_statements = [
     "INSERT INTO weather (weather_day, weather_detail_id, weather_location) VALUES ('2024-05-25', 2, 'New York');",
     "INSERT INTO weather_detail (weather_detail_id, weather_detail_type, weather_detail_temperature, weather_detail_time) VALUES (1,'Partly cloudy', 30, '2024-05-29 12:00:00');",
     "INSERT INTO weather_detail (weather_detail_id, weather_detail_type, weather_detail_temperature, weather_detail_time) VALUES (2,'Sunny', 31, '2024-05-29 13:00:00');",
-    "INSERT INTO pharmacy (pharmacy_id,work_time_id, pharmacy_name, pharmacy_location, pharmacy_on_duty) VALUES (1,1, 'Pharmacy 1', 'New York', 1);",
-    "INSERT INTO pharmacy (pharmacy_id,work_time_id, pharmacy_name, pharmacy_location, pharmacy_on_duty) VALUES (2,2, 'Pharmacy 2', 'Los Angeles', 0);",
+    "INSERT INTO pharmacy (pharmacy_id,work_time_id, pharmacy_name, pharmacy_location, pharmacy_on_duty,pharmacy_latitude,pharmacy_longitude) VALUES (1,1, 'Pharmacy 1', 'New York', 1,24.92716,-74.67158);",
+    "INSERT INTO pharmacy (pharmacy_id,work_time_id, pharmacy_name, pharmacy_location, pharmacy_on_duty,pharmacy_latitude,pharmacy_longitude) VALUES (2,2, 'Pharmacy 2', 'Los Angeles', 0,-57.69248,-73.31652);",
     "INSERT INTO work_time (work_time_start, work_time_end) VALUES ('2024-05-25 08:00:00', '2024-05-26 17:00:00');",
     "INSERT INTO work_time (work_time_start, work_time_end) VALUES ('2024-05-26 09:00:00', '2024-05-27 18:00:00');",
     "INSERT INTO event (work_time_id, event_photo, event_name, event_location, event_is_liked) VALUES (1, 'https://www.kibrisrentacar.com/wp-content/uploads/k%C4%B1br%C4%B1s-gece-hayati-resim.jpg', 'Event 1', 'New York', 1);",

@@ -50,6 +50,8 @@ class Pharmacy(db.Model):
     pharmacy_name = db.Column(db.String(255))
     pharmacy_location = db.Column(db.String(255))
     pharmacy_on_duty = db.Column(db.Boolean)
+    pharmacy_latitude = db.Column(db.Float)
+    pharmacy_longitude = db.Column(db.Float)
     work_time = db.relationship('WorkTime',backref=db.backref('pharmacies', lazy=True))
 
 class WorkTime(db.Model):
@@ -70,6 +72,7 @@ class Request(db.Model):
     request_id = db.Column(db.Integer, primary_key=True)
     request_type_id = db.Column(db.Integer, db.ForeignKey('request_type.request_type_id'))
     comment = db.Column(db.String(255))
+    request_type = db.relationship('RequestType',backref=db.backref('requests', lazy=True))
 
 class RequestType(db.Model):
     request_type_id = db.Column(db.Integer, primary_key=True)

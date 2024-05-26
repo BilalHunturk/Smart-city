@@ -335,6 +335,21 @@ def get_work_time_by_id(work_time_id):
 #     db.session.commit()
 #     return jsonify({'message': 'Event information added successfully'}), 201
 
+@app.route('/pharmacy', methods=['POST'])
+def add_pharmacy():
+    data = request.get_json()
+    new_pharmacy = Pharmacy(
+        pharmacy_name = data['pharmacy_name'],
+        pharmacy_location = data['pharmacy_location'],
+        pharmacy_on_duty = data['pharmacy_on_duty'],
+        pharmacy_latitude =data['pharmacy_latitude'],
+        pharmacy_longitude = data['pharmacy_longitude'],
+        work_time_id = data['work_time_id']
+    )
+    db.session.add(new_pharmacy)
+    db.session.commit()
+    return jsonify({'message': 'Pharmacy information added successfully'}), 201
+
 @app.route('/pharmacy/<int:pharmacy_id>', methods=['GET'])
 def get_pharmacy_by_id(pharmacy_id):
     pharmacy = Pharmacy.query.get(pharmacy_id)
@@ -368,7 +383,9 @@ def get_all_pharmacies():
                 'work_time_id': pharmacy.work_time.work_time_id,
                 'work_time_start': pharmacy.work_time.work_time_start.strftime('%Y-%m-%d %H:%M:%S'),
                 'work_time_end': pharmacy.work_time.work_time_end.strftime('%Y-%m-%d %H:%M:%S')
-            }
+            },
+            'pharmacy_latitude':pharmacy.pharmacy_latitude,
+            'pharmacy_longitude':pharmacy.pharmacy_longitude
         } for pharmacy in pharmacies
     ]
     return jsonify(result), 200
@@ -393,7 +410,11 @@ def get_request():
         {
             'request_id': item.request_id,
             'request_type_id': item.request_type_id,
-            'comment': item.comment
+            'comment': item.comment,
+            'request_type':{
+                'request_type_id':item.request_type.request_type_id,
+                'request_type':item.request_type.request_type
+            }
         } for item in requests
     ]
     return jsonify(result), 200
