@@ -148,7 +148,7 @@ def add_park():
     new_park = Park(
         park_name=data['park_name'],
         station_id=data['station_id'],
-        park_full=data['park_full']
+        park_full=data['park_full'],
     )
     db.session.add(new_park)
     db.session.commit()
@@ -180,21 +180,27 @@ def add_traffic():
     data = request.get_json()
     new_traffic = Traffic(
         crowd_situation=data['crowd_situation'],
-        station_id=data['station_id']
+        station_id=data['station_id'],
     )
     db.session.add(new_traffic)
     db.session.commit()
     return jsonify({'message': 'Traffic information added successfully'}), 201
 
 # Example route for retrieving traffic information
-@app.route('/traffic', methods=['GET'])
-def get_traffic():
+@app.route('/traffics', methods=['GET'])
+def get_traffics():
     traffic = Traffic.query.all()
     result = [
         {
             'traffic_id': item.traffic_id,
             'crowd_situation': item.crowd_situation,
-            'station_id': item.station_id
+            'station_id': item.station_id,
+            'station' : {
+                'station_id':item.station.station_id,
+                'station_name':item.station.station_name,
+                'station_latitude':item.station.station_latitude,
+                'station_longitude':item.station.station_longitude
+            }
         } for item in traffic
     ]
     return jsonify(result), 200

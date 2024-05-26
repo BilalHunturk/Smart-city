@@ -28,6 +28,7 @@ class Traffic(db.Model):
     traffic_id = db.Column(db.Integer, primary_key=True)
     crowd_situation = db.Column(db.Float)
     station_id = db.Column(db.Integer, db.ForeignKey('station.station_id'))
+    station = db.relationship('Station', backref=db.backref('traffics', lazy=True))
 
 class WeatherDetail(db.Model):
     weather_detail_id = db.Column(db.Integer, primary_key=True)
