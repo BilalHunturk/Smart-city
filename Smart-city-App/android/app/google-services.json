@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "267357886310",
+    "project_id": "bilalodev-efa17",
+    "storage_bucket": "bilalodev-efa17.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267357886310:android:7add9d559d717dc765daa7",
+        "android_client_info": {
+          "package_name": "com.example.bocekilaclama"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXuxf_NVfsRExDEz7uwZ24xd_dU3ubC68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
