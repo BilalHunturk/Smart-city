@@ -80,7 +80,9 @@ def get_all_events():
             }
         } for event in events
     ]
-    return jsonify(result), 200
+
+    response = { "events" : result}
+    return jsonify(response), 200
 
 @app.route('/event/<int:event_id>', methods=['GET'])
 def get_event_by_id(event_id):
@@ -140,7 +142,10 @@ def get_transportations():
                     'station_longitude': station.station_longitude
                 })
         result.append(transportation_data)
-    return jsonify(result), 200
+
+    response = { "transportations" : result}
+
+    return jsonify(response), 200
 
 @app.route('/park', methods=['POST'])
 def add_park():
@@ -172,7 +177,8 @@ def get_parks():
             }
         } for park in parks
     ]
-    return jsonify(result), 200
+    response = { "parks" : result}
+    return jsonify(response), 200
 
 # Example route for adding traffic
 @app.route('/traffic', methods=['POST'])
@@ -191,19 +197,41 @@ def add_traffic():
 def get_traffics():
     traffic = Traffic.query.all()
     result = [
-        {
+        # {
+        #     'traffic_id': item.traffic_id,
+        #     'crowd_situation': item.crowd_situation,
+        #     'station_id': item.station_id,
+        #     'station' : {
+        #         'station_id':item.station.station_id,
+        #         'station_name':item.station.station_name,
+        #         'station_latitude':item.station.station_latitude,
+        #         'station_longitude':item.station.station_longitude
+        #     }
+        # } for item in traffic
+    ]
+    
+
+    for item in traffic:
+        transportation_data = {
             'traffic_id': item.traffic_id,
             'crowd_situation': item.crowd_situation,
             'station_id': item.station_id,
-            'station' : {
-                'station_id':item.station.station_id,
-                'station_name':item.station.station_name,
-                'station_latitude':item.station.station_latitude,
-                'station_longitude':item.station.station_longitude
-            }
-        } for item in traffic
-    ]
-    return jsonify(result), 200
+            'stations': []
+        }
+        # Fetch the stations using the station IDs
+        for station_id in item.station_ids:
+            station = Station.query.get(station_id)
+            if station:
+                transportation_data['stations'].append({
+                    'station_id': station.station_id,
+                    'station_name': station.station_name,
+                    'station_latitude': station.station_latitude,
+                    'station_longitude': station.station_longitude
+                })
+        result.append(transportation_data)
+        
+    response = { "traffics" : result}
+    return jsonify(response), 200
 
 @app.route('/weather', methods=['POST'])
 def add_weather():
@@ -233,7 +261,7 @@ def get_weather_by_id(weather_id):
             'weather_detail_temperature': weather.weather_detail.weather_detail_temperature,
             'weather_detail_time': weather.weather_detail.weather_detail_time.strftime('%Y-%m-%d %H:%M:%S')
         }
-    }), 20
+    }), 200
 
 @app.route('/weather', methods=['GET'])
 def get_weather():
@@ -254,8 +282,8 @@ def get_weather():
                 'weather_detail_time': weather.weather_detail.weather_detail_time.strftime('%Y-%m-%d %H:%M:%S')}
         }for weather in weathers
     ]
-    
-    return jsonify(result), 20
+    response = { "weather" : result}
+    return jsonify(response), 200
 
 # Example route for adding weather type
 @app.route('/weather_detail', methods=['POST'])
@@ -371,7 +399,8 @@ def get_all_pharmacies():
             }
         } for pharmacy in pharmacies
     ]
-    return jsonify(result), 200
+    response = { "pharmacies" : result}
+    return jsonify(response), 200
 
 # Example route for adding request
 @app.route('/request', methods=['POST'])
