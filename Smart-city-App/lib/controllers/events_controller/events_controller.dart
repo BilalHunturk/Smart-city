@@ -1,6 +1,6 @@
 import 'package:bocekilaclama/export.dart';
 import 'package:bocekilaclama/models/event_model/response_event.dart';
-import 'package:bocekilaclama/services/file.dart';
+import 'package:bocekilaclama/services/event_service/event_service.dart';
 
 class EventController extends GetxController implements EventService {
   RxBool status = true.obs;
@@ -19,7 +19,6 @@ class EventController extends GetxController implements EventService {
     try {
       var responseModel = await _eventService.fecthData();
       eventModel = responseModel?.events!;
-      await apiDelay;
       return null;
     } catch (e) {
       return null;

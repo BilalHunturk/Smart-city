@@ -53,3 +53,7 @@ class NetworkService {
     return model.fromJson(jsonBody);
   }
 }
+
+abstract class FecthApi<T extends IBaseModel> {
+  Future<T?> fecthData();
+}

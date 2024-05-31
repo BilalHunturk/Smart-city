@@ -1,10 +1,12 @@
 import 'package:bocekilaclama/export.dart';
 import 'package:bocekilaclama/models/route_model/response_route.dart';
 import 'package:bocekilaclama/models/traffic_model/response_traffic.dart';
-import 'package:bocekilaclama/services/file.dart';
+import 'package:bocekilaclama/services/direction_service/direction_service.dart';
+import 'package:bocekilaclama/services/traffics_service/traffics_service.dart';
 import 'package:latlong2/latlong.dart';
 
-class TrafficsController extends GetxController implements TrafficsService {
+class TrafficsController extends GetxController
+    implements TrafficsService, DirectionService {
   RxBool isloading = true.obs;
 
   final List<Traffic> traffics = [];
@@ -14,6 +16,7 @@ class TrafficsController extends GetxController implements TrafficsService {
   Map<double, List<LatLng>> routpointsMap = {};
 
   final TrafficsService _trafficsService = TrafficsService();
+  final DirectionService _directionService = DirectionService();
 
   double stationLatitude(int index, bool first) =>
       traffics[index].stations![first ? 0 : 1].stationLatitude!;
@@ -45,13 +48,12 @@ class TrafficsController extends GetxController implements TrafficsService {
   }
 
   void addRoutePoints(List<LatLng> points) {
-    int nextKey = routpointsMap.length + 1;
     routpointsMap[crowdSituation.value] = points;
   }
 
   @override
   Future<RouteModel> getDirection(List<LatLng> routpoints) async {
-    RouteModel? response = await _trafficsService.getDirection(routpoints);
+    RouteModel? response = await _directionService.getDirection(routpoints);
     routpointsTraffic = [];
 
     routpointsTraffic = response.routes!.first.geometry!.coordinates!

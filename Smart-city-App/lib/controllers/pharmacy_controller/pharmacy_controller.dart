@@ -1,6 +1,6 @@
 import 'package:bocekilaclama/export.dart';
 import 'package:bocekilaclama/models/pharmacy_model/response_pharmacy.dart';
-import 'package:bocekilaclama/services/file.dart';
+import 'package:bocekilaclama/services/pharmacies_service/pharmacies_service.dart';
 import 'package:latlong2/latlong.dart';
 
 class PharmaciesController extends GetxController implements PharmaciesService {

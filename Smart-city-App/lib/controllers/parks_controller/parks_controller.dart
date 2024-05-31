@@ -1,6 +1,6 @@
 import 'package:bocekilaclama/export.dart';
 import 'package:bocekilaclama/models/park_model/response_park.dart';
-import 'package:bocekilaclama/services/file.dart';
+import 'package:bocekilaclama/services/parks_service/parks_service.dart';
 
 class ParksController extends GetxController implements ParksService {
   RxBool isloading = true.obs;

@@ -1,11 +1,12 @@
 import 'package:bocekilaclama/export.dart';
 import 'package:bocekilaclama/models/route_model/response_route.dart';
 import 'package:bocekilaclama/models/transportation_model/response_transportation.dart';
-import 'package:bocekilaclama/services/file.dart';
+import 'package:bocekilaclama/services/direction_service/direction_service.dart';
+import 'package:bocekilaclama/services/transportation_service/transportation_service.dart';
 import 'package:latlong2/latlong.dart';
 
 class TransportationsController extends GetxController
-    implements TransPortationsService {
+    implements TransPortationsService, DirectionService {
   RxBool isLoading = true.obs;
 
   final List<Transportation> transportations = [];
@@ -13,6 +14,7 @@ class TransportationsController extends GetxController
 
   final TransPortationsService _transPortationsService =
       TransPortationsService();
+  final DirectionService _directionService = DirectionService();
 
   double stationLatitude(int index, bool first) =>
       transportations[index].stations![first ? 0 : 1].stationLatitude!;
@@ -39,8 +41,7 @@ class TransportationsController extends GetxController
 
   @override
   Future<RouteModel> getDirection(List<LatLng> routpoints) async {
-    RouteModel? response =
-        await _transPortationsService.getDirection(routpoints);
+    RouteModel? response = await _directionService.getDirection(routpoints);
     routpointsTransportation = response.routes!.first.geometry!.coordinates!
         .map((element) => LatLng(element.last, element.first))
         .toList();
